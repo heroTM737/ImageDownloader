@@ -1,33 +1,36 @@
-var http = require('http');
-var fs = require('fs');
-var request = require("request");
-var jsdom = require("jsdom");
-// var credential = require("./credential/credential");
+const fs = require('fs');
+const request = require('request');
+const cheerio = require('cheerio');
 
-var host = "http://www.dota2.com/heroes/?l=english";
+var download = function (uri, filename, callback) {
+    request.head(uri, function (err, res, body) {
+        console.log('');
+        console.log('url:', uri);
+        console.log('content-type:', res.headers['content-type']);
+        console.log('content-length:', res.headers['content-length']);
 
-var callback = function(err, resp, body) {
-	var img_sources = jsdom.env(body, function (errors, window) {
-		var imgs = window.document.getElementsByClassName('heroHoverLarge');
-			for (var i = 0; i < imgs.length; i++) {
-				var id = imgs[i].getAttribute('id');
-				var hero_id = id.substring(id.indexOf("_") + 1);
-				console.log(hero_id);
+        request(uri).pipe(fs.createWriteStream(filename)).on('close', callback);
+    });
+};
 
-				var src = imgs[i].getAttribute('src');
-				if (src ){
-					if (src.indexOf("http") == 0 || src.indexOf("https") == 0){
-						request.get(src).pipe(fs.createWriteStream('downloaded/' + hero_id + ".jpg"));
-					}
-					
-				} 
-			}
-	});
-}
+var url = "http://sachvui.com/doc-sach/o-long-vien-tron-bo-au-yao-hsing/tap-1-thay-gioi-tro-gioi-phan-3.html";
+request(url, function (error, response, body) {
+    if (error) {
+        console.log('error:', error); // Print the error if one occurred
+        return;
+    }
 
-// var proxyUrl = "http://" + credential.username + ":" + credential.password + "@" + credential.proxy + ":" + credential.port + "/";
-// var proxiedRequest = request.defaults({'proxy': proxyUrl});
-// proxiedRequest.get(host, callback);
+    // console.log(body);
 
-request.get(host, callback);
+    var $ = cheerio.load(body);
+    var allImg = $('img');
+    var length = $('img').length;
+    for (var i = 0; i < length; i++) {
+        var src = allImg[i].attribs.src;
+        var nameIndex = src.lastIndexOf('/');
+        var name = src.substr(nameIndex + 1);
+        // console.log();
+        download(src, 'tap1/' + name, () => { });
+    }
 
+});

@@ -1,15 +1,15 @@
 {
-  "name": "imagedownloader",
+  "name": "image-downloader",
   "version": "1.0.0",
-  "description": "",
-  "main": "app.js",
-  "scripts": {
-    "test": "echo \"Error: no test specified\" && exit 1"
-  },
+  "description": "download all image from url",
+  "main": "index.js",
+  "repository": "git@github.com:StephenGrider/ReduxSimpleStarter.git",
   "author": "tientm",
   "license": "ISC",
+  "devDependencies": {
+  },
   "dependencies": {
-    "jsdom": "^9.12.0",
-    "request": "^2.81.0"
+    "request": "^2.85.0",
+    "cheerio": "^1.0.0-rc.2"
   }
 }
